@@ -1,0 +1,36 @@
+# Dependencies (Root, Client, and Server)
+node_modules/
+**/node_modules/
+
+# Environment variables & secrets (Excludes all .env files except .env.example)
+.env
+.env.*
+!.env.example
+**/.env
+**/.env.*
+!**/.env.example
+
+# Build and production distribution outputs
+dist/
+dist-ssr/
+build/
+**/dist/
+
+# Logs & debugging output
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# Editor directories and OS system files
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
