@@ -1,6 +1,14 @@
-# 🏋️ BMI Tracker - Dark Obsidian Glassmorphism Edition
+# 🏋️ BMI Tracker
 
 A full-stack, production-ready Body Mass Index (BMI) tracking application built using the MERN stack (MongoDB, Express, React, Node.js). Features modern Dark Obsidian Glassmorphism design aesthetics, interactive Recharts visualization, TanStack Query state management, and secure JWT authentication with HttpOnly refresh token rotation.
+
+---
+
+## 🌐 Live Deployment Links
+
+- 🚀 **Live Frontend Application**: [https://bmi-app-six-peach.vercel.app/](https://bmi-app-six-peach.vercel.app/)
+- ⚡ **Live Express API (Backend)**: [https://bmi-app-backend-3ivo.onrender.com/](https://bmi-app-backend-3ivo.onrender.com/)
+- 📦 **GitHub Repository**: [https://github.com/jayprakashm578/BMI-app](https://github.com/jayprakashm578/BMI-app)
 
 ---
 
@@ -147,7 +155,7 @@ BMI App (Monorepo Workspace)
 
 ### **1. Clone Repository**
 ```bash
-git clone https://github.com/YOUR_USERNAME/bmi-tracker.join
+git clone https://github.com/jayprakashm578/BMI-app.git
 cd "BMI app"
 ```
 
