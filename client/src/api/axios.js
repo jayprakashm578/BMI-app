@@ -1,5 +1,6 @@
 import axios from "axios";
-const api = axios.create({ baseURL: '/api', withCredentials: true });
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || '/api';
+const api = axios.create({ baseURL: API_BASE_URL, withCredentials: true });
 
 // Request interceptor — add token to outgoing requests
 api.interceptors.request.use(
@@ -23,7 +24,7 @@ api.interceptors.response.use(
       originalRequest._retry = true;
 
       try {
-        const response = await axios.post('/api/user/refresh');
+        const response = await axios.post(`${API_BASE_URL}/user/refresh`, {}, { withCredentials: true });
         const { "New access token": newToken } = response.data;
 
         localStorage.setItem('accessToken', newToken);

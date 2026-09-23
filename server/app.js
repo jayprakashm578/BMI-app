@@ -5,7 +5,12 @@ import measurementRoutes from "./src/routes/measuremetnRoutes.js";
 
 const app = express();
 
-app.use(cors());
+app.use(
+  cors({
+    origin: process.env.CLIENT_URL || true,
+    credentials: true,
+  })
+);
 app.use(express.json());
 
 app.use("/api/user", userRoutes);
