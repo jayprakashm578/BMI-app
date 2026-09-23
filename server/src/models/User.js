@@ -20,14 +20,6 @@ const userSchema = new mongoose.Schema(
       required: true,
       select: false,
     },
-   height:{
-      type:Number,
-      required: true
-   },
-   weight:{
-      type:Number,
-      required: true
-   },
      refreshTokens: [
       {
         token: {type: String, required: true},

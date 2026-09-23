@@ -5,6 +5,7 @@ import { X } from "lucide-react";
 
 export function AddMeasurementModal({isOpen, onClose, initialHeight, initialWeight}){
     const queryClient = useQueryClient();
+    const [unit, setUnit] = useState("metric");
     const [height, setHeight] = useState(initialHeight || "");
     const [weight, setWeight] = useState(initialWeight || ""); 
 
@@ -24,7 +25,7 @@ export function AddMeasurementModal({isOpen, onClose, initialHeight, initialWeig
 
     const handleSubmit = (e) => {
         e.preventDefault();
-        mutation.mutate({ height: Number(height), weight: Number(weight) });
+        mutation.mutate({ height: Number(height), weight: Number(weight), unit });
     };
 
     if (!isOpen) return null;
@@ -46,10 +47,36 @@ export function AddMeasurementModal({isOpen, onClose, initialHeight, initialWeig
                     </button>
                 </div>
 
+                {/* Unit Switcher Pill Toggle */}
+                <div className="flex bg-slate-950/80 p-1.5 rounded-2xl border border-slate-800/80 mb-5">
+                    <button
+                        type="button"
+                        onClick={() => setUnit("metric")}
+                        className={`flex-1 py-2 text-xs font-semibold rounded-xl transition-all duration-200 ${
+                            unit === "metric"
+                                ? "bg-gradient-to-r from-indigo-600 to-violet-600 text-white shadow-lg shadow-indigo-600/25"
+                                : "text-slate-400 hover:text-slate-200"
+                        }`}
+                    >
+                        Metric (cm / kg)
+                    </button>
+                    <button
+                        type="button"
+                        onClick={() => setUnit("imperial")}
+                        className={`flex-1 py-2 text-xs font-semibold rounded-xl transition-all duration-200 ${
+                            unit === "imperial"
+                                ? "bg-gradient-to-r from-indigo-600 to-violet-600 text-white shadow-lg shadow-indigo-600/25"
+                                : "text-slate-400 hover:text-slate-200"
+                        }`}
+                    >
+                        Imperial (in / lbs)
+                    </button>
+                </div>
+
                 <form onSubmit={handleSubmit} className="space-y-5">
                     <div>
                         <label className="block text-xs font-semibold uppercase tracking-wider text-slate-300 mb-2" htmlFor="modal-height">
-                            Height (cm)
+                            Height ({unit === "imperial" ? "inches" : "cm"})
                         </label>
                         <input
                             type="number"
@@ -57,14 +84,14 @@ export function AddMeasurementModal({isOpen, onClose, initialHeight, initialWeig
                             value={height}
                             onChange={(e) => setHeight(e.target.value)}
                             className="w-full px-4 py-3 rounded-xl bg-slate-950/60 border border-slate-700/80 text-white placeholder-slate-500 focus:outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 transition-all duration-200"
-                            placeholder="175"
+                            placeholder={unit === "imperial" ? "68" : "175"}
                             required
                         />
                     </div>
 
                     <div>
                         <label className="block text-xs font-semibold uppercase tracking-wider text-slate-300 mb-2" htmlFor="modal-weight">
-                            Weight (kg)
+                            Weight ({unit === "imperial" ? "lbs" : "kg"})
                         </label>
                         <input
                             type="number"
@@ -72,7 +99,7 @@ export function AddMeasurementModal({isOpen, onClose, initialHeight, initialWeig
                             value={weight}
                             onChange={(e) => setWeight(e.target.value)}
                             className="w-full px-4 py-3 rounded-xl bg-slate-950/60 border border-slate-700/80 text-white placeholder-slate-500 focus:outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 transition-all duration-200"
-                            placeholder="70"
+                            placeholder={unit === "imperial" ? "154" : "70"}
                             required
                         />
                     </div>

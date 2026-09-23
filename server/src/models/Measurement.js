@@ -22,6 +22,11 @@ const measurementSchema = new mongoose.Schema(
     category: {
         type: String,
         enum: ["Underweight", "Normal weight", "Overweight", "Obese"]
+    },
+    unit: {
+        type: String,
+        enum: ["metric", "imperial"],
+        default: "metric"
     }
 },
 { timestamps: true}

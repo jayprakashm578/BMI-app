@@ -2,7 +2,7 @@ import { User } from "../models/User.js";
 
 
 export async function validateRegister(req, res, next) {
-  const { name, email, password, height, weight } = req.body;
+  const { name, email, password} = req.body;
 
   if (!name || !email) {
     return res.status(400).json({
@@ -10,11 +10,6 @@ export async function validateRegister(req, res, next) {
     });
   }
 
-  if (!height || !weight) {
-    return res.status(400).json({
-      error: "height and weight are required",
-    });
-  }
 
   if (!password) {
     return res.status(400).json({

@@ -107,7 +107,9 @@ export function Dashboard() {
                 <Scale className="w-5 h-5" />
               </div>
             </div>
-            <span className="text-4xl font-extrabold text-white tracking-tight">{latest?.weight ? `${latest.weight} kg` : "--"}</span>
+            <span className="text-4xl font-extrabold text-white tracking-tight">
+              {latest?.weight ? `${latest.weight} ${latest.unit === "imperial" ? "lbs" : "kg"}` : "--"}
+            </span>
           </div>
 
           <div className="bg-slate-900/60 backdrop-blur-xl border border-slate-800/80 rounded-3xl p-6 shadow-xl shadow-black/20 hover:border-slate-700/80 transition-all duration-300 group sm:col-span-2 md:col-span-1">
@@ -191,8 +193,12 @@ export function Dashboard() {
                       <td className="py-4 px-4 text-slate-300 font-medium">
                         {new Date(m.createdAt).toLocaleDateString("en-US", { year: "numeric", month: "short", day: "numeric" })}
                       </td>
-                      <td className="py-4 px-4 font-semibold text-white">{m.weight} kg</td>
-                      <td className="py-4 px-4 text-slate-300">{m.height} cm</td>
+                      <td className="py-4 px-4 font-semibold text-white">
+                        {m.weight} {m.unit === "imperial" ? "lbs" : "kg"}
+                      </td>
+                      <td className="py-4 px-4 text-slate-300">
+                        {m.height} {m.unit === "imperial" ? "in" : "cm"}
+                      </td>
                       <td className="py-4 px-4 font-bold text-indigo-300">{m.bmi}</td>
                       <td className="py-4 px-4">
                         <span className={`px-3 py-1 text-xs font-semibold rounded-full border inline-flex items-center gap-1.5 ${getBadgeColor(m.category)}`}>

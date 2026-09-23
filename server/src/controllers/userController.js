@@ -8,22 +8,15 @@ import bcrypt from "bcryptjs";
 //Create a User
 export async function createUser(req, res, next) {
   try {
-    const { name, email, password, height, weight } = req.body;
-    const user = await createUserService(name, email, password, height, weight);
-
-    // Automatically create initial Measurement entry from registration height & weight
-    const bmi = calculateBMI(height, weight);
-    const category = getBMICategory(bmi);
-    await createMeasurementService(user._id, height, weight, bmi, category);
+    const { name, email, password} = req.body;
+    const user = await createUserService(name, email, password);
 
     res.status(201).json({
       message: "User created successfully",
       user: {
         id: user._id,
         name: user.name,
-        email: user.email,
-        height: user.height,
-        weight: user.weight,
+        email: user.email
       },
     });
   } catch (error) {

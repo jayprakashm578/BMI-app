@@ -4,10 +4,10 @@ import { Measurement } from "../models/Measurement.js";
 
 export async function createMeasurement(req, res, next) {
   try {
-    const { height, weight } = req.body;
-    const bmi = calculateBMI(height, weight);
+    const { height, weight, unit = "metric" } = req.body;
+    const bmi = calculateBMI(height, weight, unit);
     const category = getBMICategory(bmi);
-    const measurement = await createMeasurementService(req.user._id, height, weight, bmi, category);
+    const measurement = await createMeasurementService(req.user._id, height, weight, bmi, category, unit);
     res.status(201).json({
       message: "Measurement created successfully",
       measurement,

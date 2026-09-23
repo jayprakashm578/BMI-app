@@ -8,8 +8,6 @@ export function Register(){
     const [name, setName] = useState("");
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
-    const [height, setHeight] = useState("");
-    const [weight, setWeight] = useState("");
     const [error, setError] = useState("");
     const [submitting, setSubmitting] = useState(false);
 
@@ -26,10 +24,7 @@ export function Register(){
             setError("Please enter all fields");
             return;
         }
-        if(!height || !weight){
-            setError("Please enter height and weight");
-            return;
-        }
+       
         if(password.length < 6){
             setError("Password must be at least 6 characters");
             return;
@@ -37,7 +32,7 @@ export function Register(){
         setSubmitting(true);
         setError("");
         try {
-            await api.post("/user/register", { name, email, password, height: Number(height), weight: Number(weight) });
+            await api.post("/user/register", { name, email, password });
             navigate("/login");
         } catch (error) {
             setError(error.response?.data?.error || "Registration failed");
@@ -110,37 +105,7 @@ export function Register(){
                         />
                     </div>
 
-                    <div className="grid grid-cols-2 gap-4">
-                        <div>
-                            <label className="block text-xs font-semibold uppercase tracking-wider text-slate-300 mb-1.5" htmlFor="height">
-                                Height (cm)
-                            </label>
-                            <input
-                                type="number"
-                                id="height"
-                                value={height}
-                                onChange={(e) => setHeight(e.target.value)}
-                                className="w-full px-4 py-3 rounded-xl bg-slate-950/60 border border-slate-700/80 text-white placeholder-slate-500 focus:outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 transition-all duration-200"
-                                placeholder="175"
-                                required
-                            />
-                        </div>
-
-                        <div>
-                            <label className="block text-xs font-semibold uppercase tracking-wider text-slate-300 mb-1.5" htmlFor="weight">
-                                Weight (kg)
-                            </label>
-                            <input
-                                type="number"
-                                id="weight"
-                                value={weight}
-                                onChange={(e) => setWeight(e.target.value)}
-                                className="w-full px-4 py-3 rounded-xl bg-slate-950/60 border border-slate-700/80 text-white placeholder-slate-500 focus:outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 transition-all duration-200"
-                                placeholder="70"
-                                required
-                            />
-                        </div>
-                    </div>
+                   
 
                     <button
                         type="submit"

@@ -1,7 +1,13 @@
-export function calculateBMI(height, weight) {
-    const heightInMeters = height > 3 ? height / 100 : height;
-    const bmi = weight / (heightInMeters * heightInMeters);
-    return Number(bmi.toFixed(1));
+export function calculateBMI(height, weight, unit = "metric") {
+    if (unit === "imperial") {
+        const bmi = 703 * (weight / (height * height));
+        return Number(bmi.toFixed(1));
+    }
+    else {
+        const heightInMeters = height > 3 ? height / 100 : height;
+        const bmi = weight / (heightInMeters * heightInMeters);
+        return Number(bmi.toFixed(1));
+    }
 }
 
 export function getBMICategory(bmi) {
