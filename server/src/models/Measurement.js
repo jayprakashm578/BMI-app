@@ -15,6 +15,12 @@ const measurementSchema = new mongoose.Schema(
         type: Number,
         required: true
     },
+    rawHeight: {
+        type: Number
+    },
+    rawWeight: {
+        type: Number
+    },
     bmi: {
         type: Number,
         required: true
@@ -22,6 +28,16 @@ const measurementSchema = new mongoose.Schema(
     category: {
         type: String,
         enum: ["Underweight", "Normal weight", "Overweight", "Obese"]
+    },
+    heightUnit: {
+        type: String,
+        enum: ["cm", "in"],
+        default: "cm"
+    },
+    weightUnit: {
+        type: String,
+        enum: ["kg", "lbs"],
+        default: "kg"
     },
     unit: {
         type: String,

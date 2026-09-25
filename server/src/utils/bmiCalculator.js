@@ -1,13 +1,22 @@
-export function calculateBMI(height, weight, unit = "metric") {
-    if (unit === "imperial") {
-        const bmi = 703 * (weight / (height * height));
-        return Number(bmi.toFixed(1));
+export function calculateBMI(height, weight, heightUnit = "cm", weightUnit = "kg") {
+    // 1. Convert height to cm if input is in inches
+    let heightInCm = Number(height);
+    if (heightUnit === "in" || heightUnit === "imperial") {
+        heightInCm = height * 2.54;
     }
-    else {
-        const heightInMeters = height > 3 ? height / 100 : height;
-        const bmi = weight / (heightInMeters * heightInMeters);
-        return Number(bmi.toFixed(1));
+
+    // 2. Convert weight to kg if input is in lbs
+    let weightInKg = Number(weight);
+    if (weightUnit === "lbs" || weightUnit === "imperial") {
+        weightInKg = weight * 0.45359237;
     }
+
+    // 3. Perform BMI calculation on unrounded metric values
+    const heightInMeters = heightInCm > 3 ? heightInCm / 100 : heightInCm;
+    const rawBmi = weightInKg / (heightInMeters * heightInMeters);
+
+    // 4. Rounding is performed ONLY AFTER BMI is generated
+    return Number(rawBmi.toFixed(1));
 }
 
 export function getBMICategory(bmi) {
