@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { useAuth } from "../context/AuthContext.jsx";
+import { SocialLoginButtons } from "../components/SocialLoginButtons.jsx";
 import api from "../api/axios.js";
 
 export function Login() {
@@ -88,6 +89,8 @@ export function Login() {
                         {submitting ? "Signing in..." : "Sign In"}
                     </button>
                 </form>
+
+                <SocialLoginButtons />
 
                 <p className="mt-8 text-center text-sm text-slate-400">
                     Need an account?{" "}

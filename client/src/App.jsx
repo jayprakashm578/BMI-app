@@ -4,6 +4,7 @@ import { AuthProvider } from './context/AuthContext.jsx'
 import { Dashboard } from './pages/Dashboard.jsx'
 import { Login } from './pages/Login.jsx'
 import { Register } from './pages/Register.jsx'
+import { SSOSuccess } from './pages/SSOSuccess.jsx'
 import { ProtectedRoute } from './components/ProtectedRoute.jsx'
 
 function App() {
@@ -19,6 +20,10 @@ function App() {
     {
       path: "/register",
       element: <Register />
+    },
+    {
+      path: "/sso-success",
+      element: <SSOSuccess />
     },
     {
       path: "/dashboard",

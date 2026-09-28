@@ -60,6 +60,36 @@ export async function loginUser(req, res, next) {
   }
 }
 
+export async function handleSocialCallback(req, res, next) {
+  try {
+    const user = req.user;
+    if (!user) {
+      const clientUrl = process.env.CLIENT_URL || "http://localhost:5173";
+      return res.redirect(`${clientUrl}/login?error=sso_failed`);
+    }
+
+    const accessToken = await generateAccessToken(user);
+    const rawRefreshToken = await generateRefreshToken(user);
+    const refreshTokenHash = await bcrypt.hash(rawRefreshToken, 10);
+
+    await User.findByIdAndUpdate(user._id, {
+      $push: { refreshTokens: { token: refreshTokenHash } },
+    });
+
+    res.cookie("refreshToken", rawRefreshToken, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "Strict",
+      maxAge: 7 * 24 * 60 * 60 * 1000,
+    });
+
+    const clientUrl = process.env.CLIENT_URL || "http://localhost:5173";
+    res.redirect(`${clientUrl}/sso-success?token=${accessToken}`);
+  } catch (error) {
+    next(error);
+  }
+}
+
 export function getCurrentUser(req, res, next) {
   return res.status(200).json({
    user: req.user

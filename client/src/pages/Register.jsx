@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import api from "../api/axios.js";
 import { useAuth } from "../context/AuthContext.jsx";
+import { SocialLoginButtons } from "../components/SocialLoginButtons.jsx";
 
 
 export function Register(){
@@ -115,6 +116,8 @@ export function Register(){
                         {submitting ? "Creating Account..." : "Create Account"}
                     </button>
                 </form>
+
+                <SocialLoginButtons />
 
                 <p className="mt-8 text-center text-sm text-slate-400">
                     Already have an account?{" "}
