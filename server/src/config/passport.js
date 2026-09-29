@@ -8,7 +8,7 @@ import dotenv from "dotenv";
 
 dotenv.config();
 
-const SERVER_URL = process.env.SERVER_URL || "";
+const SERVER_URL = (process.env.SERVER_URL || "").replace(/\/+$/, "");
 
 // Account Linking Engine: Finds existing user by Provider ID or Email, or creates a new user.
 async function findOrCreateSocialUser({ provider, providerId, email, name, avatar }) {

@@ -17,35 +17,47 @@ userRoutes.post("/logout-all", validateUser, logoutFromAll);
 // --- OAuth Social Login Trigger & Callback Routes ---
 const CLIENT_URL = process.env.CLIENT_URL || "http://localhost:5173";
 
+// Helper middleware to check if passport strategy is registered before invoking authentication
+function authenticateProvider(provider, options) {
+  return (req, res, next) => {
+    if (!passport._strategies[provider]) {
+      return res.status(400).json({
+        error: `OAuth provider '${provider}' is not configured on the server. Please check environment variables.`,
+      });
+    }
+    passport.authenticate(provider, options)(req, res, next);
+  };
+}
+
 // 1. Google OAuth
-userRoutes.get("/google", passport.authenticate("google", { scope: ["profile", "email"], session: false }));
+userRoutes.get("/google", authenticateProvider("google", { scope: ["profile", "email"], session: false }));
 userRoutes.get(
   "/google/callback",
-  passport.authenticate("google", { session: false, failureRedirect: `${CLIENT_URL}/login?error=sso_failed` }),
+  authenticateProvider("google", { session: false, failureRedirect: `${CLIENT_URL}/login?error=sso_failed` }),
   handleSocialCallback
 );
 
 // 2. GitHub OAuth
-userRoutes.get("/github", passport.authenticate("github", { scope: ["user:email"], session: false }));
+userRoutes.get("/github", authenticateProvider("github", { scope: ["user:email"], session: false }));
 userRoutes.get(
   "/github/callback",
-  passport.authenticate("github", { session: false, failureRedirect: `${CLIENT_URL}/login?error=sso_failed` }),
+  authenticateProvider("github", { session: false, failureRedirect: `${CLIENT_URL}/login?error=sso_failed` }),
   handleSocialCallback
 );
 
 // 3. LinkedIn OAuth
-userRoutes.get("/linkedin", passport.authenticate("linkedin", { scope: ["openid", "profile", "email"], session: false }));
+userRoutes.get("/linkedin", authenticateProvider("linkedin", { scope: ["openid", "profile", "email"], session: false }));
 userRoutes.get(
   "/linkedin/callback",
-  passport.authenticate("linkedin", { session: false, failureRedirect: `${CLIENT_URL}/login?error=sso_failed` }),
+  authenticateProvider("linkedin", { session: false, failureRedirect: `${CLIENT_URL}/login?error=sso_failed` }),
   handleSocialCallback
 );
 
 // 4. Facebook OAuth
-userRoutes.get("/facebook", passport.authenticate("facebook", { scope: ["email"], session: false }));
+userRoutes.get("/facebook", authenticateProvider("facebook", { scope: ["email"], session: false }));
 userRoutes.get(
   "/facebook/callback",
-  passport.authenticate("facebook", { session: false, failureRedirect: `${CLIENT_URL}/login?error=sso_failed` }),
+  authenticateProvider("facebook", { session: false, failureRedirect: `${CLIENT_URL}/login?error=sso_failed` }),
   handleSocialCallback
 );
 

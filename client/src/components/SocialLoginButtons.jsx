@@ -1,7 +1,7 @@
 import React from "react";
 
 export function SocialLoginButtons() {
-  const API_URL = import.meta.env.VITE_API_BASE_URL || "http://localhost:5000/api";
+  const API_URL = import.meta.env.VITE_API_BASE_URL || "/api";
 
   const handleSocialLogin = (provider) => {
     window.location.href = `${API_URL}/user/${provider}`;
