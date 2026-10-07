@@ -3,6 +3,8 @@ import cors from "cors";
 import passport from "./src/config/passport.js";
 import userRoutes from "./src/routes/userRoutes.js";
 import measurementRoutes from "./src/routes/measuremetnRoutes.js";
+import developerRoutes from "./src/routes/developerRoutes.js";
+import publicApiRoutes from "./src/routes/publicApiRoutes.js";
 
 const app = express();
 
@@ -19,6 +21,8 @@ app.use(passport.initialize());
 
 app.use("/api/user", userRoutes);
 app.use("/api/measurement", measurementRoutes);
+app.use("/api/developer", developerRoutes);
+app.use("/api/v1", publicApiRoutes);
 
 app.get("/", (req, res) =>{
     res.send("BMI Express backend.")

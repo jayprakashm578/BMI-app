@@ -1,20 +1,20 @@
 import { createMeasurementService } from "../services/measurementService.js";
-import { calculateBMI, getBMICategory } from "../utils/bmiCalculator.js";
+import { calculateBMI, getBMICategory, convertToCm, convertToKg } from "../utils/bmiCalculator.js";
 import { Measurement } from "../models/Measurement.js";
 
 export async function createMeasurement(req, res, next) {
   try {
-    const { height, weight, heightUnit = "cm", weightUnit = "kg", unit, createdAt } = req.body;
+    const { height, weight, heightUnit = "cm", weightUnit = "kg", unit, feet, inches, createdAt } = req.body;
 
     const effectiveHeightUnit = heightUnit || (unit === "imperial" ? "in" : "cm");
     const effectiveWeightUnit = weightUnit || (unit === "imperial" ? "lbs" : "kg");
 
-    // Convert inputs to normalized metric floats (cm & kg)
-    const heightInCm = effectiveHeightUnit === "in" ? Number((height * 2.54).toFixed(2)) : Number(height);
-    const weightInKg = effectiveWeightUnit === "lbs" ? Number((weight * 0.45359237).toFixed(2)) : Number(weight);
+    // Convert inputs to exact unrounded metric floats (cm & kg)
+    const heightInCm = convertToCm(height, effectiveHeightUnit, inches);
+    const weightInKg = convertToKg(weight, effectiveWeightUnit);
 
     // Calculate BMI on unrounded floats, rounding ONLY after generation
-    const bmi = calculateBMI(height, weight, effectiveHeightUnit, effectiveWeightUnit);
+    const bmi = calculateBMI(height, weight, effectiveHeightUnit, effectiveWeightUnit, inches);
     const category = getBMICategory(bmi);
 
     const measurement = await createMeasurementService(
@@ -64,17 +64,17 @@ export async function getMeasurements(req, res, next) {
 }
 export async function updateMeasurement(req, res, next) {
   try {
-    const { height, weight, heightUnit = "cm", weightUnit = "kg", unit, createdAt } = req.body;
+    const { height, weight, heightUnit = "cm", weightUnit = "kg", unit, feet, inches, createdAt } = req.body;
 
     const effectiveHeightUnit = heightUnit || (unit === "imperial" ? "in" : "cm");
     const effectiveWeightUnit = weightUnit || (unit === "imperial" ? "lbs" : "kg");
 
-    const heightInCm = effectiveHeightUnit === "in" ? Number((height * 2.54).toFixed(2)) : Number(height);
-    const weightInKg = effectiveWeightUnit === "lbs" ? Number((weight * 0.45359237).toFixed(2)) : Number(weight);
+    const heightInCm = convertToCm(height, effectiveHeightUnit, inches);
+    const weightInKg = convertToKg(weight, effectiveWeightUnit);
 
-    const bmi = calculateBMI(height, weight, effectiveHeightUnit, effectiveWeightUnit);
+    const bmi = calculateBMI(height, weight, effectiveHeightUnit, effectiveWeightUnit, inches);
     const category = getBMICategory(bmi);
-    const calculatedUnit = (effectiveHeightUnit === "in" || effectiveWeightUnit === "lbs") ? "imperial" : "metric";
+    const calculatedUnit = (effectiveHeightUnit === "in" || effectiveHeightUnit === "ft" || effectiveWeightUnit === "lbs") ? "imperial" : "metric";
 
     const updatePayload = {
       height: heightInCm,

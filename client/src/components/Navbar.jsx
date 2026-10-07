@@ -38,6 +38,13 @@ export function Navbar() {
               <span>Dashboard</span>
             </Link>
 
+            <Link
+              to="/developer"
+              className="flex items-center space-x-2 text-sm font-medium text-slate-300 hover:text-white bg-slate-800/40 hover:bg-slate-800 px-3.5 py-2 rounded-xl border border-slate-700/50 transition-all duration-200"
+            >
+                           <span>For Developers </span>
+            </Link>
+
             {/* User Profile Pill */}
             <div className="hidden sm:flex items-center space-x-2.5 bg-slate-800/60 border border-slate-700/60 px-3.5 py-2 rounded-xl text-slate-200 text-sm font-medium">
               <div className="w-6 h-6 rounded-full bg-indigo-500/20 border border-indigo-500/40 flex items-center justify-center text-indigo-300">
@@ -62,4 +69,4 @@ export function Navbar() {
       </div>
     </header>
   );
-}
+}

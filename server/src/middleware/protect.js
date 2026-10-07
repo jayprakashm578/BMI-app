@@ -30,7 +30,7 @@ export async function validateUser(req, res, next) {
 
       return next();
     } catch (error) {
-      return res.status(403).json({
+      return res.status(401).json({
         error: "No authorization",
       });
     }

@@ -6,6 +6,7 @@ import { Login } from './pages/Login.jsx'
 import { Register } from './pages/Register.jsx'
 import { SSOSuccess } from './pages/SSOSuccess.jsx'
 import { ProtectedRoute } from './components/ProtectedRoute.jsx'
+import { Developer } from './pages/Developer.jsx';
 
 function App() {
   const router = createBrowserRouter([
@@ -24,6 +25,10 @@ function App() {
     {
       path: "/sso-success",
       element: <SSOSuccess />
+    },
+    {
+      path: "/developer",
+      element: <ProtectedRoute><Developer /></ProtectedRoute>
     },
     {
       path: "/dashboard",

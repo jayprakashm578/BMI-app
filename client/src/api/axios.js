@@ -1,5 +1,12 @@
 import axios from "axios";
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || '/api';
+
+let rawBase = import.meta.env.VITE_API_BASE_URL || '/api';
+rawBase = rawBase.replace(/\/+$/, '');
+if (!rawBase.endsWith('/api') && !rawBase.includes('/api/')) {
+  rawBase = `${rawBase}/api`;
+}
+const API_BASE_URL = rawBase;
+
 const api = axios.create({ baseURL: API_BASE_URL, withCredentials: true });
 
 // Request interceptor — add token to outgoing requests
@@ -14,26 +21,30 @@ api.interceptors.request.use(
   (error) => Promise.reject(error),
 );
 
-// Response interceptor — refresh token on 401
+// Response interceptor — refresh token on 401 or 403 authorization errors
 api.interceptors.response.use(
   (response) => response,
   async (error) => {
     const originalRequest = error.config;
+    const isAuthError =
+      error.response?.status === 401 ||
+      (error.response?.status === 403 && error.response?.data?.error === "No authorization");
 
-    if (error.response?.status === 401 && !originalRequest._retry) {
+    if (isAuthError && originalRequest && !originalRequest._retry) {
       originalRequest._retry = true;
 
       try {
-        const response = await axios.post(`${API_BASE_URL}/user/refresh`, {}, { withCredentials: true });
-        const { "New access token": newToken } = response.data;
+        const refreshUrl = `${API_BASE_URL}/user/refresh`;
+        const response = await axios.post(refreshUrl, {}, { withCredentials: true });
+        const newToken = response.data?.["New access token"] || response.data?.accessToken;
 
-        localStorage.setItem('accessToken', newToken);
-        originalRequest.headers.Authorization = `Bearer ${newToken}`;
-
-        return api(originalRequest);
+        if (newToken) {
+          localStorage.setItem('accessToken', newToken);
+          originalRequest.headers.Authorization = `Bearer ${newToken}`;
+          return api(originalRequest);
+        }
       } catch (refreshError) {
         localStorage.removeItem('accessToken');
-        // Optional: redirect to login
         return Promise.reject(refreshError);
       }
     }
