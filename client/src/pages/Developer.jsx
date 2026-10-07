@@ -43,18 +43,56 @@ export function Developer() {
   const [fullSecretKeys, setFullSecretKeys] = useState({});
   const [isSandboxKeyFocused, setIsSandboxKeyFocused] = useState(false);
 
+  const storageKey = user?._id ? `bmi_dev_secrets_${user._id}` : "bmi_dev_secrets_guest";
+
   useEffect(() => {
     fetchOverview();
-  }, []);
+  }, [user?._id]);
+
+  const saveFullSecret = (keyId, rawSecret) => {
+    setFullSecretKeys((prev) => {
+      const updated = { ...prev, [keyId]: rawSecret };
+      try {
+        localStorage.setItem(storageKey, JSON.stringify(updated));
+      } catch (e) {
+        console.error("Failed to store secret key:", e);
+      }
+      return updated;
+    });
+  };
+
+  const removeFullSecret = (keyId) => {
+    setFullSecretKeys((prev) => {
+      const updated = { ...prev };
+      delete updated[keyId];
+      try {
+        localStorage.setItem(storageKey, JSON.stringify(updated));
+      } catch (e) {
+        console.error("Failed to remove secret key:", e);
+      }
+      return updated;
+    });
+  };
 
   const fetchOverview = async () => {
     try {
       setLoading(true);
       const res = await api.get("/developer/overview");
       setOverview(res.data);
+
+      let secretsMap = {};
+      try {
+        const storedSecrets = localStorage.getItem(storageKey);
+        if (storedSecrets) {
+          secretsMap = JSON.parse(storedSecrets);
+          setFullSecretKeys(secretsMap);
+        }
+      } catch (e) {}
+
       if (res.data?.keys && res.data.keys.length > 0 && !sandboxApiKey) {
         const activeKey = res.data.keys.find((k) => k.status === "active") || res.data.keys[0];
-        setSandboxApiKey(activeKey.keyPrefix);
+        const cachedFullSecret = activeKey?.id ? secretsMap[activeKey.id] : null;
+        setSandboxApiKey(cachedFullSecret || activeKey.keyPrefix);
       }
     } catch (err) {
       console.error("Failed to load developer overview:", err);
@@ -224,7 +262,7 @@ axios.post("${baseUrl}/analyze-progress",
       setNewlyCreatedKey(rawSecret);
       setSandboxApiKey(rawSecret);
       if (keyId) {
-        setFullSecretKeys((prev) => ({ ...prev, [keyId]: rawSecret }));
+        saveFullSecret(keyId, rawSecret);
       }
       setKeyName("");
       setIsCreateModalOpen(false);
@@ -243,6 +281,7 @@ axios.post("${baseUrl}/analyze-progress",
     }
     try {
       await api.patch(`/developer/keys/${keyId}/revoke`);
+      removeFullSecret(keyId);
       setSuccessMsg("API key revoked.");
       fetchOverview();
     } catch (err) {
@@ -260,7 +299,7 @@ axios.post("${baseUrl}/analyze-progress",
       const rawSecret = res.data.apiKey;
       setNewlyCreatedKey(rawSecret);
       setSandboxApiKey(rawSecret);
-      setFullSecretKeys((prev) => ({ ...prev, [keyId]: rawSecret }));
+      saveFullSecret(keyId, rawSecret);
       setSuccessMsg("API key secret rotated successfully! Save your new key secret now.");
       fetchOverview();
     } catch (err) {
