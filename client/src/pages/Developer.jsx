@@ -43,17 +43,19 @@ export function Developer() {
   const [fullSecretKeys, setFullSecretKeys] = useState({});
   const [isSandboxKeyFocused, setIsSandboxKeyFocused] = useState(false);
 
-  const storageKey = user?._id ? `bmi_dev_secrets_${user._id}` : "bmi_dev_secrets_guest";
+  const STORAGE_KEY = "bmi_dev_api_key_secrets";
 
   useEffect(() => {
     fetchOverview();
-  }, [user?._id]);
+  }, []);
 
   const saveFullSecret = (keyId, rawSecret) => {
+    if (!keyId || !rawSecret) return;
+    const strId = String(keyId);
     setFullSecretKeys((prev) => {
-      const updated = { ...prev, [keyId]: rawSecret };
+      const updated = { ...prev, [strId]: rawSecret };
       try {
-        localStorage.setItem(storageKey, JSON.stringify(updated));
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(updated));
       } catch (e) {
         console.error("Failed to store secret key:", e);
       }
@@ -62,11 +64,13 @@ export function Developer() {
   };
 
   const removeFullSecret = (keyId) => {
+    if (!keyId) return;
+    const strId = String(keyId);
     setFullSecretKeys((prev) => {
       const updated = { ...prev };
-      delete updated[keyId];
+      delete updated[strId];
       try {
-        localStorage.setItem(storageKey, JSON.stringify(updated));
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(updated));
       } catch (e) {
         console.error("Failed to remove secret key:", e);
       }
@@ -77,21 +81,25 @@ export function Developer() {
   const fetchOverview = async () => {
     try {
       setLoading(true);
-      const res = await api.get("/developer/overview");
-      setOverview(res.data);
 
       let secretsMap = {};
       try {
-        const storedSecrets = localStorage.getItem(storageKey);
+        const storedSecrets = localStorage.getItem(STORAGE_KEY);
         if (storedSecrets) {
           secretsMap = JSON.parse(storedSecrets);
           setFullSecretKeys(secretsMap);
         }
-      } catch (e) {}
+      } catch (e) {
+        console.error("Error parsing stored secrets:", e);
+      }
 
-      if (res.data?.keys && res.data.keys.length > 0 && !sandboxApiKey) {
+      const res = await api.get("/developer/overview");
+      setOverview(res.data);
+
+      if (res.data?.keys && res.data.keys.length > 0) {
         const activeKey = res.data.keys.find((k) => k.status === "active") || res.data.keys[0];
-        const cachedFullSecret = activeKey?.id ? secretsMap[activeKey.id] : null;
+        const activeKeyId = String(activeKey?.id || activeKey?._id);
+        const cachedFullSecret = secretsMap[activeKeyId];
         setSandboxApiKey(cachedFullSecret || activeKey.keyPrefix);
       }
     } catch (err) {
@@ -832,7 +840,8 @@ axios.post("${baseUrl}/analyze-progress",
                             <span>{k.keyPrefix}</span>
                             <button
                               onClick={() => {
-                                const secretToCopy = fullSecretKeys[k.id] || k.keyPrefix;
+                                const keyIdStr = String(k.id || k._id);
+                                const secretToCopy = fullSecretKeys[keyIdStr] || k.keyPrefix;
                                 handleCopyPrefix(k.id, secretToCopy);
                               }}
                               className="px-2.5 py-1 bg-slate-800 hover:bg-slate-700 text-indigo-300 hover:text-white border border-slate-700/60 rounded text-[10px] font-semibold transition-colors"
