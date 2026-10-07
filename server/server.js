@@ -9,9 +9,9 @@ async function startServer() {
     try {
         await connectDatabase();
         console.log("Database Connected");
-        app.listen(PORT, () => {
-            console.log(`Developer OS API running on http://localhost:${PORT}`);
-        })
+        app.listen(PORT, "0.0.0.0", () => {
+            console.log(`BMI API running on port ${PORT}`);
+        });
     } catch (error) {
         console.log("Failed to start server", error);
 

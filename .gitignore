@@ -4,6 +4,7 @@ node_modules/
 
 # Environment variables & secrets (Excludes all .env files except .env.example)
 .env
+.env.docker
 .env.*
 !.env.example
 **/.env
